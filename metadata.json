@@ -1,0 +1,6 @@
+{
+  "name": "Kharaf AI",
+  "description": "Evidence-grounded RAG decision-support system and Digital Twin architecture for Barhee date palms in Saudi Arabia conforming to ITU-T Y.3172.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
