@@ -23,13 +23,23 @@ function getGeminiClient(): GoogleGenAI | null {
   return geminiClient;
 }
 
-// Tokenize text into lowercased normalized tokens
+const STOP_WORDS = new Set([
+  'the', 'is', 'at', 'which', 'on', 'a', 'an', 'and', 'or', 'in', 'for', 'of', 'to', 'with',
+  'by', 'from', 'as', 'it', 'this', 'that', 'are', 'be', 'what', 'how', 'when', 'where',
+  'why', 'who', 'does', 'do', 'can', 'should', 'would', 'could', 'about', 'your', 'my',
+  'our', 'their', 'his', 'her', 'its', 'you', 'we', 'they', 'i', 'me', 'us', 'them',
+  'some', 'any', 'all', 'into', 'then', 'than', 'also', 'over', 'after', 'before', 'between',
+  'out', 'up', 'down', 'more', 'most', 'other', 'such', 'only', 'same', 'so', 'just', 'now',
+  'من', 'في', 'على', 'إلى', 'عن', 'ما', 'ماذا', 'كيف', 'هل', 'هو', 'هي', 'أن', 'إن', 'مع', 'هذا', 'هذه'
+]);
+
+// Tokenize text into lowercased normalized tokens excluding stopwords
 function tokenize(text: string): string[] {
   return text
     .toLowerCase()
     .replace(/[^\w\s\u0600-\u06FF-]/g, ' ')
     .split(/\s+/)
-    .filter((w) => w.length > 1);
+    .filter((w) => w.length > 2 && !STOP_WORDS.has(w));
 }
 
 // Classify query intent and domain
@@ -196,55 +206,55 @@ export function retrieveEvidence(query: string): RetrievedChunkMatch[] {
 
     // 4. Specific high-signal semantic triggers
     // Barhee Pollination
-    if ((qLower.includes('pollin') || qLower.includes('pollen') || qLower.includes('تلقيح')) && chunk.kbId === 'KB-016') {
-      score += 4.5;
+    if (/\b(pollin|pollen|spathe|pollinating|pollination)\b/i.test(qLower) || /تلقيح|لقاح|طلع/.test(qLower)) {
+      if (chunk.kbId === 'KB-016') score += 4.5;
     }
     // Barhee Harvest / Khalal / Maturity
-    if ((qLower.includes('harvest') || qLower.includes('khalal') || qLower.includes('maturity') || qLower.includes('حصاد') || qLower.includes('خلال')) && (chunk.kbId === 'KB-022' || chunk.kbId === 'KB-017' || chunk.kbId === 'KB-018')) {
-      score += 4.0;
+    if (/\b(harvest|harvesting|khalal|maturity|brix|rutab|tamar)\b/i.test(qLower) || /حصاد|خلال|رطب|تمر/.test(qLower)) {
+      if (chunk.kbId === 'KB-022' || chunk.kbId === 'KB-017' || chunk.kbId === 'KB-018') score += 4.0;
     }
     // Penman-Monteith / Water Requirements
-    if ((qLower.includes('penman') || qLower.includes('water requirement') || qLower.includes('evapotranspiration') || qLower.includes('احتياج مائي')) && chunk.kbId === 'KB-013') {
-      score += 4.5;
+    if (/\b(penman|monteith|evapotranspiration|etc|eto|irrigation|water requirement)\b/i.test(qLower) || /احتياج مائي|ري|مياه/.test(qLower)) {
+      if (chunk.kbId === 'KB-013') score += 4.5;
     }
     // Saudi G.A.P CP5.1.1
-    if ((qLower.includes('gap') || qLower.includes('cp5.1.1') || qLower.includes('record') || qLower.includes('سعودي قاب')) && chunk.kbId === 'KB-006') {
-      score += 4.5;
+    if (/\b(gap|cp5\.1\.1|saudi gap)\b/i.test(qLower) || /سعودي قاب/.test(qLower)) {
+      if (chunk.kbId === 'KB-006') score += 4.5;
     }
     // PDPL & Privacy
-    if ((qLower.includes('pdpl') || qLower.includes('privacy') || qLower.includes('sdaia') || qLower.includes('حماية البيانات')) && (chunk.kbId === 'KB-002' || chunk.kbId === 'KB-003' || chunk.kbId === 'KB-004')) {
-      score += 4.5;
+    if (/\b(pdpl|privacy|sdaia|personal data)\b/i.test(qLower) || /حماية البيانات|سدايا/.test(qLower)) {
+      if (chunk.kbId === 'KB-002' || chunk.kbId === 'KB-003' || chunk.kbId === 'KB-004') score += 4.5;
     }
     // ITU-T Y.3172 & Architecture
-    if ((qLower.includes('y.3172') || qLower.includes('mlfo') || qLower.includes('logical node') || qLower.includes('هيكلية')) && chunk.kbId === 'KB-001') {
-      score += 4.5;
+    if (/\b(y\.3172|mlfo|pipeline|logical node)\b/i.test(qLower) || /هيكلية/.test(qLower)) {
+      if (chunk.kbId === 'KB-001') score += 4.5;
     }
     // Digital Twin
-    if ((qLower.includes('digital twin') || qLower.includes('توأم رقمي')) && (chunk.kbId === 'KB-023' || chunk.kbId === 'KB-024')) {
-      score += 4.5;
+    if (/\b(digital twin|cyber-physical|iot)\b/i.test(qLower) || /توأم رقمي/.test(qLower)) {
+      if (chunk.kbId === 'KB-023' || chunk.kbId === 'KB-024') score += 4.5;
     }
     // Saudi Dates Mark
-    if ((qLower.includes('dates mark') || qLower.includes('علامة التمور') || qLower.includes('mrl')) && chunk.kbId === 'KB-010') {
-      score += 4.5;
+    if (/\b(dates mark|ncpd|mrl)\b/i.test(qLower) || /علامة التمور/.test(qLower)) {
+      if (chunk.kbId === 'KB-010') score += 4.5;
     }
     // SFDA Date Washing
-    if ((qLower.includes('wash') || qLower.includes('sfda') || qLower.includes('غسيل') || qLower.includes('سلامة')) && chunk.kbId === 'KB-019') {
-      score += 4.0;
+    if (/\b(washing|sfda|sanitize|hygiene)\b/i.test(qLower) || /غسيل|سلامة الغذاء/.test(qLower)) {
+      if (chunk.kbId === 'KB-019') score += 4.0;
     }
     // GASTAT Statistics
-    if ((qLower.includes('stat') || qLower.includes('million') || qLower.includes('إحصاء')) && chunk.kbId === 'KB-020') {
-      score += 3.5;
+    if (/\b(statistics|census|gastat)\b/i.test(qLower) || /إحصاء/.test(qLower)) {
+      if (chunk.kbId === 'KB-020') score += 3.5;
     }
     // MEWA Article 12
-    if ((qLower.includes('article 12') || qLower.includes('مادة 12')) && chunk.kbId === 'KB-005') {
-      score += 4.5;
+    if (/\b(article 12|agriculture law)\b/i.test(qLower) || /مادة 12|نظام الزراعة/.test(qLower)) {
+      if (chunk.kbId === 'KB-005') score += 4.5;
     }
     // Hasr Register
-    if ((qLower.includes('hasr') || qLower.includes('حصر')) && chunk.kbId === 'KB-008') {
-      score += 4.5;
+    if (/\b(hasr|land registry|farm registry)\b/i.test(qLower) || /حصر|سجل زراعي/.test(qLower)) {
+      if (chunk.kbId === 'KB-008') score += 4.5;
     }
 
-    if (score > 1.2) {
+    if (score >= 2.0) {
       // Determine match type
       let matchType: RetrievedChunkMatch['matchType'] = 'direct_evidence';
       let relevanceExplanation = 'Direct source evidence matching query domain.';
@@ -284,7 +294,7 @@ export async function executeGroundedRAG(query: string): Promise<GroundedRAGResp
   const retrievedMatches = retrieveEvidence(query);
 
   // Check Abstention threshold (Rule 1: No unsupported claims)
-  const isAbstention = retrievedMatches.length === 0 || retrievedMatches[0].score < 1.5;
+  const isAbstention = retrievedMatches.length === 0 || retrievedMatches[0].score < 2.0;
 
   if (isAbstention) {
     const executionTimeMs = Date.now() - startTime;

@@ -38,7 +38,7 @@ export const App: React.FC = () => {
   };
 
   return (
-    <div id="kharaf-app" className="min-h-screen bg-[#F4F7F5] text-[#1A1C1E] flex flex-col font-sans antialiased">
+    <div id="kharaf-app" className="min-h-screen bg-[#F8FAF8] text-[#17211D] flex flex-col font-sans antialiased">
       {/* 1. Welcoming Header */}
       <Header
         activeTab={activeTab}
@@ -91,27 +91,27 @@ export const App: React.FC = () => {
       </div>
 
       {/* 4. Footer */}
-      <footer className="bg-white border-t border-[#E2E8F0] py-6 text-xs text-[#64748B] mt-auto">
+      <footer className="bg-white border-t border-[#E6ECE8] py-6 text-xs text-[#68736D] mt-auto">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-3">
           <div className="flex items-center space-x-2">
-            <span className="font-bold text-[#0B2C24]">KHARAF AI (خَرَاف)</span>
+            <span className="font-bold text-[#163A32]">KHARAF AI (خَرَاف)</span>
             <span>•</span>
             <span>Agricultural Decision Support for Barhee Date Palms</span>
             <span>•</span>
-            <span className="text-[#059669] font-medium">Saudi Arabia</span>
+            <span className="text-[#2F6B55] font-semibold">Al-Ahsa & Central KSA</span>
           </div>
 
           <div className="flex items-center space-x-4">
             <button
               onClick={() => setIsArchModalOpen(true)}
-              className="hover:text-[#0B2C24] font-medium cursor-pointer transition-colors"
+              className="hover:text-[#163A32] font-medium cursor-pointer transition-colors"
             >
               ITU-T Y.3172 Architecture
             </button>
             <span>•</span>
             <button
               onClick={() => setIsExportModalOpen(true)}
-              className="hover:text-[#0B2C24] font-medium cursor-pointer transition-colors"
+              className="hover:text-[#163A32] font-medium cursor-pointer transition-colors"
             >
               Export & System Details
             </button>

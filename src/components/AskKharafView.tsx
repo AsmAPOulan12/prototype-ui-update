@@ -47,79 +47,24 @@ export const AskKharafView: React.FC<AskKharafViewProps> = ({
   const [expandedEvidenceIds, setExpandedEvidenceIds] = useState<Record<string, boolean>>({});
   const chatBottomRef = useRef<HTMLDivElement>(null);
 
-  // Chat message history initialized with conversation matching prototype
+  // Chat message history initialized with clean welcoming prompt
   const [messages, setMessages] = useState<Message[]>([
     {
       id: 'msg-welcome',
       sender: 'assistant',
       timestamp: '12:00 PM',
-      text: 'Hello Salem! How can I help with your farm today?'
-    },
-    {
-      id: 'msg-demo-user-1',
-      sender: 'user',
-      timestamp: '12:01 PM',
-      text: 'What should I do about the dry soil in Block C?'
-    },
-    {
-      id: 'msg-demo-asst-1',
-      sender: 'assistant',
-      timestamp: '12:01 PM',
-      text: 'Based on current conditions and Saudi G.A.P irrigation guidelines, I recommend increasing irrigation for Block C by 15%. The soil moisture has dropped below optimal levels (34%) due to the heatwave.',
-      ragResult: {
-        query: 'What should I do about the dry soil in Block C?',
-        classification: {
-          intent: 'Irrigation Guidance',
-          targetDomain: 'Irrigation & Water',
-          cultivarDetected: 'Barhee',
-          isBarheeSpecific: true,
-          requiresHardConstraintCheck: true
-        },
-        decisionStatus: 'Supported by evidence',
-        plainSummary: 'Soil moisture in Block C is currently 34%, triggering a dry soil alert. Increase localized irrigation by 15% during early morning or nighttime hours.',
-        whatThisMeans: 'High summer temperatures accelerate evapotranspiration in Al-Ahsa. Deep rooting date palms require sustained soil water without creating stagnant pooling that spikes salinity.',
-        thingsToConsider: [
-          'Irrigate between 04:00 AM and 07:00 AM to minimize evaporative loss.',
-          'Verify that drip emitters in Row 7 are free from mineral salt blockages.'
-        ],
-        recommendedNextStep: 'Execute manual irrigation cycle override for Block C (duration: 45 minutes).',
-        userFriendlyStatus: 'Decision Ready • Grounded in Agricultural Standards',
-        answer: 'Increase localized drip irrigation volume by 15% for Block C palms. Soil telemetry indicates root-zone moisture has declined to 34%. Maintain regular moisture logs in compliance with Saudi G.A.P standard SGAP-IRR-04.',
-        evidenceUsed: [
-          {
-            sourceTitle: 'Saudi G.A.P Irrigation & Water Management Protocols',
-            kbId: 'KB-SGAP-01',
-            chkId: 'CHK-IRR-02',
-            authority: 'MEWA / Saudi G.A.P',
-            evidenceType: 'Standard',
-            scopeCaveat: 'General Saudi G.A.P commercial farm requirement',
-            hardConstraint: true,
-            relevance: 'direct'
-          },
-          {
-            sourceTitle: 'Al-Ahsa Oasis Date Palm Irrigation Guidelines',
-            kbId: 'KB-AHS-01',
-            chkId: 'CHK-AHS-07',
-            authority: 'Agricultural Research Center',
-            evidenceType: 'Guideline',
-            scopeCaveat: 'Al-Ahsa Oasis conditions',
-            hardConstraint: false,
-            relevance: 'direct'
-          }
-        ],
-        constraintsApplied: [
-          {
-            rule: 'Saudi G.A.P Water Log Keeping',
-            description: 'Record all water volumes applied per tree block.',
-            status: 'COMPLIANT'
-          }
-        ],
-        isAbstention: false,
-        executionTimeMs: 420,
-        engineUsed: 'Deterministic Grounded Engine (Kharaf Fallback)'
-      }
+      text: 'Hello Salem! How can I help with your Barhee date palms and farm operations today?'
     }
   ]);
+
+  const initialSentRef = useRef(false);
+
+  useEffect(() => {
+    if (initialQuery && initialQuery.trim() && !initialSentRef.current) {
+      initialSentRef.current = true;
+      handleSendMessage(initialQuery.trim());
+    }
+  }, [initialQuery]);
 
   const samplePrompts = [
     'IRRIGATION SCHEDULE',
